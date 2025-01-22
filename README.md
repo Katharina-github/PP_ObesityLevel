@@ -26,35 +26,35 @@ Dataset
 
 The project is based on the Estimation of Obesity Levels Based on Eating Habits and Physical Condition dataset from the UCI Machine Learning Repository.
 
-    Dataset Link: Click here
     Key Details:
         Number of Features: 17
         Target Variable: Obesity Level (7 classes)
 
 Features
+
 Gender	Gender
+
 Age	Age
+
 Height	Height
+
 Weight	Weight
+
 family_history_with_overweight	Has a family member suffered or suffers from overweight?
+
 FAVC	Do you eat high caloric food frequently?
+
 CH2O	How much water do you drink daily?
+
 SCC	Do you monitor the calories you eat daily?
+
 FAF	How often do you have physical activity?
+
 TUE	How much time do you use technological devices such as cell phone, videogames, television, computer and others?
+
 CALC	How often do you drink alcohol?
+
 MTRANS	Which transportation do you usually use?
-Variable Name	Type	Description
-Gender	Categorical	Participant's gender
-Age	Continuous	Participant's age
-Height	Continuous	Participant's height
-Weight	Continuous	Participant's weight
-Family History with Overweight	Binary	Family history of overweight
-Frequent Consumption of Vegetables	Integer	Frequency of vegetable consumption
-Water Consumption (CH2O)	Continuous	Daily water consumption
-Physical Activity Frequency (FAF)	Continuous	Frequency of physical activity
-Use of Technology (TUE)	Integer	Time spent on technology daily
-Alcohol Consumption (CALC)	Categorical	Frequency of alcohol consumption
 
 Machine Learning Techniques
 
@@ -79,16 +79,16 @@ Installation
 
     Clone this repository:
 
-git clone https://github.com/Katharina-github/PP_ObesityLevel.git
-cd PP_ObesityLevel
+        git clone https://github.com/Katharina-github/PP_ObesityLevel.git
+        cd PP_ObesityLevel
 
-Install dependencies:
+    Install dependencies:
 
-pip install -r requirements.txt
+        pip install -r requirements.txt
 
-Run the Streamlit app:
+    Run the Streamlit app:
 
-    streamlit run Streamlit_OL.py
+        streamlit run Streamlit_OL.py
 
 Usage
 
@@ -100,11 +100,17 @@ Usage
 Repository Structure
 
 PP_ObesityLevel/
+
 │
+
 ├── Streamlit_OL.py         # Main Streamlit app script
+
 ├── PP_RiskOfObesity.ipynb  # Notebook for exploratory data analysis, model training and evaluation script
+
 ├── requirements.txt        # Python dependencies
+
 └── README.md               # Project documentation
+
 
 Acknowledgments
 

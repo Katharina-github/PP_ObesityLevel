@@ -2,17 +2,27 @@ Obesity Level Prediction Project
 
 This project uses machine learning to predict obesity levels based on eating habits and physical conditions. It offers an interactive Streamlit app for visualizing the predictions and interpreting SHAP values, providing insights into how various features influence obesity classification.
 
+
 Table of Contents
 
 Project Overview
+
 Dataset
+
 Features
+
 Machine Learning Techniques
+
 Streamlit App
+
 Installation
+
 Usage
+
 Repository Structure
+
 Acknowledgments
+
 
 Project Overview
 
@@ -21,6 +31,7 @@ The Obesity Level Prediction project is designed to:
 Predict obesity levels (e.g., Normal Weight, Overweight, Obesity Types I-III) based on lifestyle and demographic data.
 Provide interpretability through SHAP values, helping users understand feature contributions to predictions.
 Serve as an educational tool to explore the relationship between eating habits, physical conditions, and obesity levels.
+
 
 Dataset
 
@@ -56,11 +67,13 @@ CALC	                        How often do you drink alcohol?
 
 MTRANS	                        Which transportation do you usually use?
 
+
 Machine Learning Techniques
 
 Exploratory Data Analysis (EDA): Uncover trends and patterns in the data.
 Model Selection: XGBoost classifier was chosen for its robust performance with tabular data.
 SHAP Values: Used for model interpretability, showing how features influence predictions.
+
 
 Streamlit App
 
@@ -70,10 +83,12 @@ Upload their data or use pre-loaded examples.
 View predictions and explanations for obesity levels.
 Explore SHAP visualizations for interpretability.
 
+
 Key Features:
 
 Waterfall Graphs: Show feature contributions for the predicted class.
 Class-Wise SHAP Graphs: Compare how features impact all obesity levels.
+
 
 Installation
 
@@ -90,12 +105,14 @@ Run the Streamlit app:
 
         streamlit run Streamlit_OL.py
 
+
 Usage
 
 Open the Streamlit app in your browser.
 Select or upload data to make predictions.
 Explore the interactive SHAP visualizations to interpret results.
 Refer to the Advanced Insights section for deeper analysis.
+
 
 Repository Structure
 

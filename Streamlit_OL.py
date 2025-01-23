@@ -6,6 +6,16 @@ from sklearn.preprocessing import StandardScaler
 from pandas.api.types import CategoricalDtype
 import shap
 import matplotlib.pyplot as plt
+import time
+
+# to navigate back to top
+js = '''
+<script>
+    var body = window.parent.document.querySelector(".main");
+    console.log(body);
+    body.scrollTop = 0;
+</script>
+'''
 
 # Pretrained scaler
 scaler = StandardScaler()
@@ -129,10 +139,6 @@ def explain_prediction(data, model):
     Args:
         data (pd.DataFrame): Preprocessed input data for prediction.
         model (xgb.Booster): Trained XGBoost model.
-    
-    Returns:
-        shap_values: SHAP values for the prediction.
-
     """
     obesity_levels = [
     'Insufficient_Weight', 'Normal_Weight', 'Overweight_Level_I',
@@ -157,7 +163,7 @@ def explain_prediction(data, model):
     
     # Plot SHAP values for the predicted class
     st.subheader(f"Explaining SHAP values for predicted class: {predicted_class_name}")
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(8, 4))
     shap.waterfall_plot(
         shap.Explanation(
             values=shap_values.values[0, :, predicted_class_index],
@@ -172,6 +178,71 @@ def explain_prediction(data, model):
     st.write("The SHAP waterfall graph helps us understand how different features (the values entered in the survey) contribute to the prediction of the target class (the obesity level that was predicted), such as Overweight. Each bar represents the effect of a specific feature, with its length showing how much the feature pushes the prediction for the target class.")
     st.write("Red Bars: These features positively contribute to the predicted class (e.g., Overweight). They increase the likelihood of the participant being classified into this class.")
     st.write("Blue Bars: These features negatively contribute to the predicted class (e.g., Overweight). They decrease the likelihood of being classified into this class. However, blue bars do not directly tell you which other class the feature favors (e.g., Normal Weight or Obesity). To know this, you'd need to look at the SHAP values for those other classes (which are displayed below).")
+    st.write("For example, if Weight is red and has a large value, it strongly contributes to the prediction of Overweight. Similarly, if Age is blue, it means age lowers the likelihood of Overweight, though it may favor another class.")
+    
+    #Adding an explantion of the feature names
+    # Define the data
+    feature_data = {
+        "Variable Name": [
+            "Gender", "Age", "Height", "Weight", "family_history_with_overweight", "FAVC", 
+            "CH2O", "SCC", "FAF", "TUE", "CALC", "MTRANS"
+        ],
+        
+        "Description": [
+            "Gender", "Age", "Height", "Weight", "Has a family member suffered or suffers from overweight?", 
+            "Do you eat high caloric food frequently?", "How much water do you drink daily?", 
+            "Do you monitor the calories you eat daily?", "How often do you have physical activity?", 
+            "How much time do you use technological devices such as cell phone, videogames, television, computer and others?", 
+            "How often do you drink alcohol?", "Which transportation do you usually use?", 
+        ]
+    }
+
+    # Create a DataFrame
+    df = pd.DataFrame(feature_data)
+
+    # Streamlit app
+    st.title("Variable Information Table")
+    st.write("Below is the table containing variable information:")
+
+    # Display the table in Streamlit
+    st.dataframe(df)  # Interactive table
+
+
+def deep_explain_prediction(data, model):
+    """
+    Explain the prediction of the XGBoost model using SHAP for all classes.
+    
+    Args:
+        data (pd.DataFrame): Preprocessed input data for prediction.
+        model (xgb.Booster): Trained XGBoost model.
+    """
+    obesity_levels = [
+    'Insufficient_Weight', 'Normal_Weight', 'Overweight_Level_I',
+    'Overweight_Level_II', 'Obesity_Type_I', 'Obesity_Type_II', 'Obesity_Type_III'
+    ]
+
+    # Initialize SHAP explainer for the XGBoost model
+    explainer = shap.TreeExplainer(model)
+    
+    # Calculate SHAP values
+    shap_values = explainer(data)
+    
+    # Calculate SHAP values
+    shap_values = explainer(data)
+
+    #Explaining text
+    st.subheader("Interpreting SHAP Graphs for All Classes")
+        
+    st.write("### What These Graphs Show:")
+    st.write("- Each graph represents how features impact the prediction probability for a specific class.")
+    st.write("- For each feature:")
+    st.write("  - **Red bars**: Increase the likelihood of the class.")
+    st.write("  - **Blue bars**: Decrease the likelihood of the class.")
+    st.write("- Unlike the single-class waterfall graph, these graphs provide a more comprehensive view of how features affect all possible classes.")
+        
+    st.write("### Key Insights:")
+    st.write("- By comparing the graphs, you can see how the same feature might favor one class while reducing the likelihood of another.")
+    st.write("- **Example:** The entered value for 'Weight' might have a strong positive impact on 'Obesity_Type_I' but negatively impact 'Normal_Weight'.")
 
     st.subheader(f"Explaining SHAP values for all classes")
     # Loop through all classes and visualize SHAP values
@@ -179,7 +250,7 @@ def explain_prediction(data, model):
     for class_index in range(num_classes):
         class_name = obesity_levels[class_index]  # Map index to class name
         st.subheader(f"Class {class_name}:")
-        fig, ax = plt.subplots(figsize=(10, 6))
+        fig, ax = plt.subplots(figsize=(8, 4))
         shap.waterfall_plot(
             shap.Explanation(
                 values=shap_values.values[0, :, class_index],
@@ -189,12 +260,13 @@ def explain_prediction(data, model):
             show=False  # Prevent plt.show()
         )
         st.pyplot(fig)
+    
 
 # Page Config
 st.set_page_config(page_title="Obesity Prediction App", layout="wide")
 
 # Tabs
-tab1, tab2, tab3, tab4= st.tabs(["Welcome", "Survey", "Results", "More Information"])
+tab1, tab2, tab3, tab4, tab5= st.tabs(["Welcome", "Survey", "Personal Results", "Model Insights", "About"])
 
 with tab1:
     st.title("Welcome to the Obesity Prediction App")
@@ -203,7 +275,11 @@ with tab1:
         The aim of this app is to demonstrate how machine learning can be used in real-life scenarios. 
         By filling out the survey in the next tab, you'll receive a prediction of your weight level.
 
-        The prediction is not only based on weight and height but also considers your eating habits and physical condition.
+        The prediction is not only based on weight and height but also considers your eating habits and physical condition. Additionally, the app provides an interpretation of the most important features influencing the predictions, offering insights into how these factors impact weight levels.
+
+        Based on the data in this dataset, the app also provides actionable advice for achieving or maintaining a healthier weight.
+
+        This app is a tool to help you reflect on your habits and make informed decisions for a healthier lifestyle.
         
         ### Important:
         - This app is intended to showcase the usage of machine learning.
@@ -290,18 +366,16 @@ with tab2:
         }
         st.success("Survey submitted! Go to the Results tab to see the predictions.")
 
-        # Add a button that will jump to the top of the page
-        if st.button("Back to Top"):
-            # Adding custom JavaScript to scroll to the top of the page
-            st.components.v1.html("""
-            <script>
-                 window.scrollTo(0, 0);
-            </script>
-             """, height=0)
+    if st.button("Back to top", key="back_to_top_1"):
+        temp = st.empty()
+        with temp:
+            st.components.v1.html(js)
+            time.sleep(.5) # To make sure the script can execute before being deleted
+        temp.empty()
 
 
 with tab3:
-    st.title("Results")
+    st.title("Personal Results")
 
     if "survey_data" in st.session_state:
         data = st.session_state["survey_data"]
@@ -347,18 +421,115 @@ with tab3:
         # Use SHAP to explain the prediction
         explain_prediction(preprocessed_data, xgb_model)
 
+        if st.button("Back to top", key="back_to_top_4"):
+            temp = st.empty()
+            with temp:
+                st.components.v1.html(js)
+                time.sleep(.5) # To make sure the script can execute before being deleted
+            temp.empty()
+
+        #Add a button for advanced users
+        # Main button for advanced insights
+        if st.button("Advanced Insights"):
+            deep_explain_prediction(preprocessed_data, xgb_model)
+            # Add back to top button
+            if st.button("Back to top", key="back_to_top_2"):
+                temp = st.empty()
+                with temp:
+                    st.components.v1.html(js)
+                    time.sleep(.5) # To make sure the script can execute before being deleted
+                temp.empty()
+
+
     else:
         st.warning("Please complete the survey in the second tab first.")
 
-
 with tab4:
+    st.title("Model Insights")
+    st.write("This tab presents insights into the model's behavior and explains feature importance.")
+    st.subheader("Feature Importance of the Predictive Model")
+    st.image(r"C:\Users\katha\Documents\PortfolioProjects\OL\Feature_importance_XGBoost.png")
+    st.write("""
+        The chart above highlights the top 10 most important features that influence the model's predictions for obesity levels. Below is a detailed interpretation of each feature:
+
+        1. **FCVC (Frequency of Vegetable Consumption)**: 
+        - Regular consumption of vegetables is generally associated with a reduced risk of obesity. However, the data shows that individuals across all obesity levels, including those with "Obesity_Type_I," "Obesity_Type_II," and "Obesity_Type_III," report relatively high vegetable consumption. This suggests that while vegetable consumption is beneficial, it may not be sufficient to offset the impact of other dietary or lifestyle factors for those with obesity.
+
+        2. **Gender**: 
+        - Gender differences significantly affect the likelihood of obesity, potentially due to biological, hormonal, and behavioral factors that differ between men and women.
+
+        3. **Weight**: 
+        - Unsurprisingly, weight is one of the strongest predictors of obesity levels, as it directly contributes to Body Mass Index (BMI) calculations, which are a key metric for categorizing obesity.
+
+        4. **CAEC (Eating Between Meals - Frequently)**: 
+        - Frequent consumption of food between meals is generally associated with higher obesity levels due to increased calorie intake. However, in this dataset, frequent snacking is more strongly associated with individuals who have normal or insufficient weight. This could indicate that those with lower weight tend to snack to meet their caloric needs or that snacking behavior alone is not sufficient to predict obesity in this population.
+
+        5. **MTRANS (Walking)**: 
+        - Walking as a primary mode of transportation or physical activity is associated with a lower likelihood of obesity. Regular walking helps burn calories and maintain a healthy weight.
+
+        6. **Family History with Overweight**: 
+        - A family history of being overweight indicates the potential influence of genetic predisposition or shared lifestyle habits that contribute to obesity.
+
+        7. **CALC (No Alcohol Consumption)**: 
+        - Interestingly, the data suggests that individuals who do not consume alcohol are less likely to have obesity. This could be due to a healthier lifestyle overall or the absence of excess calorie intake from alcoholic beverages.
+
+        8. **FAVC (High-Calorie Food Consumption)**: 
+        - Consuming high-calorie foods is a significant predictor of obesity. Diets high in energy-dense foods contribute to excessive calorie intake and weight gain.
+
+        9. **Height**: 
+        - Height, as part of BMI calculations, plays a role in predicting obesity levels. Shorter individuals may have higher BMI values for the same weight, influencing the predictions.
+
+        10. **CAEC (Eating Between Meals - Sometimes)**: 
+        - Occasional snacking is common across all weight categories, including those with normal weight but more commonly for classes with higher obesity levels.
+
+        Overall, these features collectively provide valuable insights into the factors that influence obesity levels. While individual behaviors, such as eating habits and physical activity, are important, genetic and lifestyle factors also play a significant role.
+        """)
+
+    st.write("")
+    st.subheader("Final Suggestions for Weight Reduction Based on the Dataset")
+    st.write("""
+        Based on the findings from this dataset and supported by common sense, here are some practical suggestions to help reduce/maintaine weight:
+
+        1. **Increase Vegetable Consumption**:
+        - The dataset shows that frequent consumption of vegetables (FCVC) is associated with lower obesity levels. Including more vegetables in your diet can help you feel full while providing essential nutrients with fewer calories.
+
+        2. **Choose Walking as a Mode of Transportation**:
+        - Walking regularly, whether as a form of exercise or as a means of transportation (e.g., walking to work or errands), is associated with lower obesity levels. If possible, opt for walking instead of driving or using public transportation for shorter distances.
+
+        3. **Limit or Avoid Alcohol Consumption**:
+        - The dataset indicates that individuals who do not consume alcohol are less likely to have obesity. Alcohol is calorie-dense and often consumed in addition to regular meals, contributing to weight gain. Reducing or eliminating alcohol intake can have a positive impact on weight management.
+
+        4. **Reduce Consumption of High-Calorie Foods**:
+        - Consuming high-calorie foods (FAVC) is strongly associated with higher obesity levels. Aim to limit the intake of foods high in sugars and fats, such as fast food, sugary snacks, and fried items. Instead, focus on whole foods like fruits, vegetables, lean proteins, and whole grains.
+
+        While the model also relies on snacking behavior (CAEC), its pattern in this data is inconsistent and does not align with general dietary recommendations. Therefore, it is not included in this list. Instead, focusing on overall healthy eating habits, physical activity, and avoiding calorie-dense foods is a more reliable approach to weight management.
+
+        By adopting these lifestyle adjustments, you can take meaningful steps towards achieving and maintaining a healthier weight, or simply enhancing your overall well-being.
+        """)
+
+    if st.button("Back to top", key="back_to_top_3"):
+        temp = st.empty()
+        with temp:
+            st.components.v1.html(js)
+            time.sleep(.5) # To make sure the script can execute before being deleted
+        temp.empty()
+
+with tab5:
     st.title("More about the Obesity Prediction App")
+    st.markdown("#### Dataset:")
     st.write(
         """
-        Here more information of the used machine learning technics are presented.
-
-        All results are based on the Estimation of Obesity Levels Based On Eating Habits and Physical Condition dataset: https://archive.ics.uci.edu/dataset/544/estimation%2Bof%2Bobesity%2Blevels%2Bbased%2Bon%2Beating%2Bhabits%2Band%2Bphysical%2Bcondition?
-        
-        Link to the GitHub repository including all code (EDA, model selection, Streamlit presentation): https://github.com/Katharina-github/PP_ObesityLevel
+        All results are based on the **Estimation of Obesity Levels Based on Eating Habits and Physical Condition** dataset.  
+        You can explore the dataset here:
+        [Estimation of Obesity Levels Dataset](https://archive.ics.uci.edu/dataset/544/estimation%2Bof%2Bobesity%2Blevels%2Bbased%2Bon%2Beating%2Bhabits%2Band%2Bphysical%2Bcondition?)
         """
     )
+    st.markdown("#### Code and Implementation:")
+    st.write(
+        """
+        The complete project, including Exploratory Data Analysis (EDA), model selection, and Streamlit presentation, is available on GitHub.  
+        Visit the repository to access all the code and resources:  
+        [GitHub Repository - Obesity Level Prediction](https://github.com/Katharina-github/PP_ObesityLevel)
+        """
+    )
+

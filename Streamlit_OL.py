@@ -3,19 +3,10 @@ import pandas as pd
 import xgboost as xgb
 import numpy as np
 from sklearn.preprocessing import StandardScaler
-from pandas.api.types import CategoricalDtype
 import shap
 import matplotlib.pyplot as plt
-import time
 
-# to navigate back to top
-js = '''
-<script>
-    var body = window.parent.document.querySelector(".main");
-    console.log(body);
-    body.scrollTop = 0;
-</script>
-'''
+st.set_page_config(page_title="Obesity Prediction App", layout="wide")
 
 # Pretrained scaler
 scaler = StandardScaler()
@@ -177,7 +168,7 @@ def explain_prediction(data, model):
     st.subheader("Interpretation of SHAP Waterfall Graph for Predicted Class")
     st.write("The SHAP waterfall graph helps us understand how different features (the values entered in the survey) contribute to the prediction of the target class (the obesity level that was predicted), such as Overweight. Each bar represents the effect of a specific feature, with its length showing how much the feature pushes the prediction for the target class.")
     st.write("Red Bars: These features positively contribute to the predicted class (e.g., Overweight). They increase the likelihood of the participant being classified into this class.")
-    st.write("Blue Bars: These features negatively contribute to the predicted class (e.g., Overweight). They decrease the likelihood of being classified into this class. However, blue bars do not directly tell you which other class the feature favors (e.g., Normal Weight or Obesity). To know this, you'd need to look at the SHAP values for those other classes (which are displayed below).")
+    st.write("Blue Bars: These features negatively contribute to the predicted class (e.g., Overweight). They decrease the likelihood of being classified into this class. However, blue bars do not directly tell you which other class the feature favors (e.g., Normal Weight or Obesity). To know this, you'd need to look at the SHAP values for those other classes (which are displayed on the next page).")
     st.write("For example, if Weight is red and has a large value, it strongly contributes to the prediction of Overweight. Similarly, if Age is blue, it means age lowers the likelihood of Overweight, though it may favor another class.")
     
     #Adding an explantion of the feature names
@@ -262,13 +253,20 @@ def deep_explain_prediction(data, model):
         st.pyplot(fig)
     
 
-# Page Config
-st.set_page_config(page_title="Obesity Prediction App", layout="wide")
+# Sidebar: App Name and Image
+st.sidebar.title("Obesity Prediction App")
+st.sidebar.image(r"C:\Users\katha\Documents\PortfolioProjects\OL\vitalii-pavlyshynets-kcRFW-Hje8Y-unsplash.jpg", use_container_width=True) 
 
-# Tabs
-tab1, tab2, tab3, tab4, tab5= st.tabs(["Welcome", "Survey", "Personal Results", "Model Insights", "About"])
+# Sidebar navigation
+st.sidebar.title("Navigation")
+page = st.sidebar.radio(
+    "Go to",
+    ["Welcome", "Survey", "Personal Results", "Advanced Results", "Model Insights", "Final Suggestions", "About"]
+)
 
-with tab1:
+# Display content based on sidebar selection
+if page == "Welcome":
+
     st.title("Welcome to the Obesity Prediction App")
     st.write(
         """
@@ -287,7 +285,8 @@ with tab1:
         """
     )
 
-with tab2:
+elif page == "Survey":
+
     st.title("Survey")
 
     # Gender
@@ -366,24 +365,13 @@ with tab2:
         }
         st.success("Survey submitted! Go to the Results tab to see the predictions.")
 
-    if st.button("Back to top", key="back_to_top_1"):
-        temp = st.empty()
-        with temp:
-            st.components.v1.html(js)
-            time.sleep(.5) # To make sure the script can execute before being deleted
-        temp.empty()
 
+elif page == "Personal Results":
 
-with tab3:
     st.title("Personal Results")
 
     if "survey_data" in st.session_state:
         data = st.session_state["survey_data"]
-        
-        # Display user input
-        #st.write("### Your Inputs:")
-        #for key, value in data.items():
-            #st.write(f"- **{key.capitalize()}:** {value}")
 
         # Use a copy of the data for processing
         survey_data_copy_model = st.session_state["survey_data"].copy()
@@ -421,30 +409,29 @@ with tab3:
         # Use SHAP to explain the prediction
         explain_prediction(preprocessed_data, xgb_model)
 
-        if st.button("Back to top", key="back_to_top_4"):
-            temp = st.empty()
-            with temp:
-                st.components.v1.html(js)
-                time.sleep(.5) # To make sure the script can execute before being deleted
-            temp.empty()
+    else:
+        st.warning("Please complete the survey in the second tab first.")
 
-        #Add a button for advanced users
-        # Main button for advanced insights
-        if st.button("Advanced Insights"):
-            deep_explain_prediction(preprocessed_data, xgb_model)
-            # Add back to top button
-            if st.button("Back to top", key="back_to_top_2"):
-                temp = st.empty()
-                with temp:
-                    st.components.v1.html(js)
-                    time.sleep(.5) # To make sure the script can execute before being deleted
-                temp.empty()
+elif page == "Advanced Results":
 
+    if "survey_data" in st.session_state:
+        data = st.session_state["survey_data"]
+
+        # Use a copy of the data for processing
+        survey_data_copy_shap_all = st.session_state["survey_data"].copy()
+
+        # Process survey data
+        processed_data = process_survey_data(survey_data_copy_shap_all)
+        # Preprocess inputs
+        preprocessed_data = preprocess_inputs(processed_data)
+
+        deep_explain_prediction(preprocessed_data, xgb_model)
 
     else:
         st.warning("Please complete the survey in the second tab first.")
 
-with tab4:
+elif page == "Model Insights":
+
     st.title("Model Insights")
     st.write("This tab presents insights into the model's behavior and explains feature importance.")
     st.subheader("Feature Importance of the Predictive Model")
@@ -485,7 +472,8 @@ with tab4:
         Overall, these features collectively provide valuable insights into the factors that influence obesity levels. While individual behaviors, such as eating habits and physical activity, are important, genetic and lifestyle factors also play a significant role.
         """)
 
-    st.write("")
+elif page == "Final Suggestions":
+
     st.subheader("Final Suggestions for Weight Reduction Based on the Dataset")
     st.write("""
         Based on the findings from this dataset and supported by common sense, here are some practical suggestions to help reduce/maintaine weight:
@@ -507,14 +495,8 @@ with tab4:
         By adopting these lifestyle adjustments, you can take meaningful steps towards achieving and maintaining a healthier weight, or simply enhancing your overall well-being.
         """)
 
-    if st.button("Back to top", key="back_to_top_3"):
-        temp = st.empty()
-        with temp:
-            st.components.v1.html(js)
-            time.sleep(.5) # To make sure the script can execute before being deleted
-        temp.empty()
+elif page == "About":
 
-with tab5:
     st.title("More about the Obesity Prediction App")
     st.markdown("#### Dataset:")
     st.write(
@@ -530,6 +512,15 @@ with tab5:
         The complete project, including Exploratory Data Analysis (EDA), model selection, and Streamlit presentation, is available on GitHub.  
         Visit the repository to access all the code and resources:  
         [GitHub Repository - Obesity Level Prediction](https://github.com/Katharina-github/PP_ObesityLevel)
+        """
+    )
+
+    st.markdown("#### Image Credit:")
+    st.write(
+        """
+        The sidebar image was taken by **Vitalii Pavlyshynets** and is available on Unsplash.  
+        View the original image here:  
+        [Vitalii Pavlyshynets on Unsplash](https://unsplash.com/photos/kcRFW-Hje8Y)
         """
     )
 

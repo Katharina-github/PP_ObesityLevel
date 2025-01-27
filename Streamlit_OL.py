@@ -175,13 +175,14 @@ def explain_prediction(data, model):
     # Define the data
     feature_data = {
         "Variable Name": [
-            "Gender", "Age", "Height", "Weight", "family_history_with_overweight", "FAVC", 
+            "Gender", "Age", "Height", "Weight", "family_history_with_overweight", "FAVC", "FCVC", "NCP", "CAEC", "SMOKE",
             "CH2O", "SCC", "FAF", "TUE", "CALC", "MTRANS"
         ],
         
         "Description": [
             "Gender", "Age", "Height", "Weight", "Has a family member suffered or suffers from overweight?", 
-            "Do you eat high caloric food frequently?", "How much water do you drink daily?", 
+            "Do you eat high caloric food frequently?", "Do you usually eat vegetables in your meals?", "How many main meals do you have daily?", "Do you eat any food between meals?",
+            "Do you smoke?", "How much water do you drink daily?", 
             "Do you monitor the calories you eat daily?", "How often do you have physical activity?", 
             "How much time do you use technological devices such as cell phone, videogames, television, computer and others?", 
             "How often do you drink alcohol?", "Which transportation do you usually use?", 

@@ -120,13 +120,17 @@ PP_ObesityLevel/
 
 │
 
-├── Streamlit_OL.py         # Main Streamlit app script
+├── Streamlit_OL.py            # Main Streamlit app script
 
-├── PP_RiskOfObesity.ipynb  # Notebook for exploratory data analysis, model training and evaluation script
+├── PP_RiskOfObesity.ipynb     # Notebook for exploratory data analysis, model training and evaluation script
 
-├── requirements.txt        # Python dependencies
+├── requirements.txt           # Python dependencies
 
-└── README.md               # Project documentation
+├── images                     # different image files
+
+├── xgb_obesity_model(1).json  # XGBoost Machine Learning model
+
+└── README.md                  # Project documentation
 
 
 Acknowledgments

@@ -101,7 +101,7 @@ def preprocess_inputs(user_inputs):
 
 # Load the trained XGBoost model
 xgb_model = xgb.Booster()
-xgb_model.load_model(r"C:\Users\katha\Documents\PortfolioProjects\OL\xgb_obesity_model(1).json")
+xgb_model.load_model("xgb_obesity_model(1).json")
 
 # Predict Obesity level function:
 def predict_obesity(survey_data, xgb_model):
@@ -255,7 +255,7 @@ def deep_explain_prediction(data, model):
 
 # Sidebar: App Name and Image
 st.sidebar.title("Obesity Prediction App")
-st.sidebar.image(r"C:\Users\katha\Documents\PortfolioProjects\OL\vitalii-pavlyshynets-kcRFW-Hje8Y-unsplash.jpg", use_container_width=True) 
+st.sidebar.image("vitalii-pavlyshynets-kcRFW-Hje8Y-unsplash.jpg", use_container_width=True) 
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
@@ -435,7 +435,7 @@ elif page == "Model Insights":
     st.title("Model Insights")
     st.write("This tab presents insights into the model's behavior and explains feature importance.")
     st.subheader("Feature Importance of the Predictive Model")
-    st.image(r"C:\Users\katha\Documents\PortfolioProjects\OL\Feature_importance_XGBoost.png")
+    st.image("Feature_importance_XGBoost.png")
     st.write("""
         The chart above highlights the top 10 most important features that influence the model's predictions for obesity levels. Below is a detailed interpretation of each feature:
 

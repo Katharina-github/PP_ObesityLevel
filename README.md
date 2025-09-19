@@ -1,9 +1,10 @@
-Obesity Level Prediction Project
+# Obesity Level Prediction Project
 
 This project uses machine learning to predict obesity levels based on eating habits and physical conditions. It offers an interactive Streamlit app for visualizing the predictions and interpreting SHAP values, providing insights into how various features influence obesity classification.
 
+---
 
-Table of Contents
+## Table of Contents
 
 Project Overview
 
@@ -23,8 +24,9 @@ Repository Structure
 
 Acknowledgments
 
+---
 
-Project Overview
+## Project Overview
 
 The Obesity Level Prediction project is designed to:
 
@@ -32,16 +34,17 @@ Predict obesity levels (e.g., Normal Weight, Overweight, Obesity Types I-III) ba
 Provide interpretability through SHAP values, helping users understand feature contributions to predictions.
 Serve as an educational tool to explore the relationship between eating habits, physical conditions, and obesity levels.
 
+---
 
-Dataset
+## Dataset
 
 The project is based on the Estimation of Obesity Levels Based on Eating Habits and Physical Condition dataset from the UCI Machine Learning Repository.
 
-Key Details:
+### Key Details:
 Number of Features: 17
 Target Variable: Obesity Level (7 classes)
 
-Features
+### Features
 
 Gender	                        Gender
 
@@ -67,15 +70,17 @@ CALC	                        How often do you drink alcohol?
 
 MTRANS	                        Which transportation do you usually use?
 
+---
 
-Machine Learning Techniques
+## Machine Learning Techniques
 
 Exploratory Data Analysis (EDA): Uncover trends and patterns in the data.
 Model Selection: XGBoost classifier was chosen for its robust performance with tabular data.
 SHAP Values: Used for model interpretability, showing how features influence predictions.
 
+---
 
-Streamlit App
+## Streamlit App
 
 The Streamlit app provides an interactive interface for users to:
 
@@ -83,14 +88,12 @@ Upload their data or use pre-loaded examples.
 View predictions and explanations for obesity levels.
 Explore SHAP visualizations for interpretability.
 
-
-Key Features:
+### Key Features:
 
 Waterfall Graphs: Show feature contributions for the predicted class.
 Class-Wise SHAP Graphs: Compare how features impact all obesity levels.
 
-
-Installation
+### Installation
 
 Clone this repository:
 
@@ -105,16 +108,16 @@ Run the Streamlit app:
 
         streamlit run Streamlit_OL.py
 
-
-Usage
+### Usage
 
 Open the Streamlit app in your browser.
 Select or upload data to make predictions.
 Explore the interactive SHAP visualizations to interpret results.
 Refer to the Advanced Insights section for deeper analysis.
 
+---
 
-Repository Structure
+## Repository Structure
 
 PP_ObesityLevel/
 
@@ -132,8 +135,9 @@ PP_ObesityLevel/
 
 └── README.md                  # Project documentation
 
+---
 
-Acknowledgments
+## Acknowledgments
 
 Dataset Source: UCI Machine Learning Repository.
 SHAP Library: Used for model interpretability.

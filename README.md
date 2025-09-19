@@ -76,7 +76,9 @@ MTRANS	                        Which transportation do you usually use?
 ## Machine Learning Techniques
 
 Exploratory Data Analysis (EDA): Uncover trends and patterns in the data.
+
 Model Selection: XGBoost classifier was chosen for its robust performance with tabular data.
+
 SHAP Values: Used for model interpretability, showing how features influence predictions.
 
 ---
@@ -86,12 +88,15 @@ SHAP Values: Used for model interpretability, showing how features influence pre
 The Streamlit app provides an interactive interface for users to:
 
 Upload their data or use pre-loaded examples.
+
 View predictions and explanations for obesity levels.
+
 Explore SHAP visualizations for interpretability.
 
 ### Key Features:
 
 Waterfall Graphs: Show feature contributions for the predicted class.
+
 Class-Wise SHAP Graphs: Compare how features impact all obesity levels.
 
 ### Installation

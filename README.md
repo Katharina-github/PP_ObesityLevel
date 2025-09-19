@@ -6,23 +6,23 @@ This project uses machine learning to predict obesity levels based on eating hab
 
 ## Table of Contents
 
-Project Overview
+1. Project Overview
 
-Dataset
+2. Dataset
 
-Features
+    - Features
 
-Machine Learning Techniques
+3. Machine Learning Techniques
 
-Streamlit App
+4. Streamlit App
 
-Installation
+    - Installation
 
-Usage
+    - Usage
 
-Repository Structure
+5. Repository Structure
 
-Acknowledgments
+6. Acknowledgments
 
 ---
 
@@ -42,6 +42,7 @@ The project is based on the Estimation of Obesity Levels Based on Eating Habits 
 
 ### Key Details:
 Number of Features: 17
+
 Target Variable: Obesity Level (7 classes)
 
 ### Features
